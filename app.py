@@ -165,19 +165,6 @@ def is_human(captcha_response):
 @app.route('/send-mail', methods=["GET", "POST"])
 def contact_mail():
     if(request.method == "POST"):
-        """name1 = request.form.get('name')
-        email1 = request.form.get('email')
-        msg1 = request.form.get('message')
-        captcha_response = request.form['g-recaptcha-response']
-
-        msg = Message("Email from "+name1+"(easyDownloads2021)", sender=app.config['MAIL_USERNAME'],
-                      recipients=[app.config['MAIL_USERNAME']])
-        msg.body = "\nName : " + \
-            str(name1)+"\nEmail Id : "+str(email1) + \
-            "\nMessage : "+str(msg1)+"\n"
-        mail.send(msg)
-        flash("Your feedback has been recorded successfully!!!", "success")
-        return redirect(url_for('contactus'))"""
         name1 = request.form.get('name')
         email1 = request.form.get('email')
         msg1 = request.form.get('message')
