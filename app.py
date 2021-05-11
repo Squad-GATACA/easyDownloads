@@ -23,6 +23,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['INSTA_USER_NAME'] = os.environ.get('INSTA_USER_NAME')
 app.config['INSTA_PASS'] = os.environ.get('INSTA_PASS')
+app.config['SITE_KEY'] = os.environ.get('SITE_KEY')
 mail = Mail(app)
 
 
@@ -53,7 +54,7 @@ def aboutus():
 
 @app.route('/contactus')
 def contactus():
-    return render_template("contact.html")
+    return render_template("contact.html", site_key=str(app.config['SITE_KEY']))
 
 
 @app.route("/download-youtube-video", methods=["GET", "POST"])
