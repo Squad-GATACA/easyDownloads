@@ -154,7 +154,7 @@ def facebook_video():
 
 
 def is_human(captcha_response):
-    secret = "6LeKOaMZAAAAAKw9nhAjnpzrzrC3R0YYRf-kKDH1"
+    secret = "6LfEJtAaAAAAAIVv610Injo1k6LpyPo42YGcTUzg"
     payload = {'response': captcha_response, 'secret': secret}
     response = r.post(
         "https://www.google.com/recaptcha/api/siteverify", payload)
