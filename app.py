@@ -12,6 +12,7 @@ import requests as r
 import wget
 from flask_mail import Mail, Message
 import smtplib
+import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -152,12 +153,22 @@ def facebook_video():
     return redirect('facebook')
 
 
+def is_human(captcha_response):
+    secret = "6LeKOaMZAAAAAKw9nhAjnpzrzrC3R0YYRf-kKDH1"
+    payload = {'response': captcha_response, 'secret': secret}
+    response = r.post(
+        "https://www.google.com/recaptcha/api/siteverify", payload)
+    response_text = json.loads(response.text)
+    return response_text['success']
+
+
 @app.route('/send-mail', methods=["GET", "POST"])
 def contact_mail():
     if(request.method == "POST"):
-        name1 = request.form.get('name')
+        """name1 = request.form.get('name')
         email1 = request.form.get('email')
         msg1 = request.form.get('message')
+        captcha_response = request.form['g-recaptcha-response']
 
         msg = Message("Email from "+name1+"(easyDownloads2021)", sender=app.config['MAIL_USERNAME'],
                       recipients=[app.config['MAIL_USERNAME']])
@@ -166,7 +177,22 @@ def contact_mail():
             "\nMessage : "+str(msg1)+"\n"
         mail.send(msg)
         flash("Your feedback has been recorded successfully!!!", "success")
-        return redirect(url_for('contactus'))
+        return redirect(url_for('contactus'))"""
+        name1 = request.form.get('name')
+        email1 = request.form.get('email')
+        msg1 = request.form.get('message')
+        captcha_response = request.form['g-recaptcha-response']
+        if is_human(captcha_response):
+            msg = Message("Email from "+name1+"(easyDownloads2021)", sender=app.config['MAIL_USERNAME'],
+                          recipients=[app.config['MAIL_USERNAME']])
+            msg.body = "\nName : " + \
+                str(name1)+"\nEmail Id : "+str(email1) + \
+                "\nMessage : "+str(msg1)+"\n"
+            mail.send(msg)
+            flash("Your feedback has been recorded successfully!!!", "success")
+            return redirect(url_for('contactus'))
+        else:
+            flash("Sorry Please Check I'm not  a Robot!!!", "danger")
     return redirect(url_for('contactus'))
 
 
