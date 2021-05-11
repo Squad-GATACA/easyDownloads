@@ -10,9 +10,20 @@ import time
 import re
 import requests as r
 import wget
+from flask_mail import Mail, Message
+import smtplib
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "dgdhjdkkdkfkf"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['INSTA_USER_NAME'] = os.environ.get('INSTA_USER_NAME')
+app.config['INSTA_PASS'] = os.environ.get('INSTA_PASS')
+mail = Mail(app)
 
 
 @app.route('/')
@@ -75,7 +86,7 @@ def instagram_video():
                 try:
                     u = url.split('/')[-2]
                     os.system(
-                        f"instaloader --filename-pattern={u} --login=life_is_very_easy2021 --password=SquadPccoe2021 -- -{u}")
+                        f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
                     fname = u.strip()
                     u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
                     u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
@@ -138,6 +149,24 @@ def facebook_video():
         flash("Enter Valid Facebook Link!!!", "danger")
         return redirect('facebook')
     return redirect('facebook')
+
+
+@app.route('/send-mail', methods=["GET", "POST"])
+def contact_mail():
+    if(request.method == "POST"):
+        name1 = request.form.get('name')
+        email1 = request.form.get('email')
+        msg1 = request.form.get('message')
+
+        msg = Message("Email from "+name1+"(easyDownloads2021)", sender=app.config['MAIL_USERNAME'],
+                      recipients=[app.config['MAIL_USERNAME']])
+        msg.body = "\nName : " + \
+            str(name1)+"\nEmail Id : "+str(email1) + \
+            "\nMessage : "+str(msg1)+"\n"
+        mail.send(msg)
+        flash("Your Response has been sent successfully!!!", "success")
+        return redirect(url_for('contactus'))
+    return redirect(url_for('contactus'))
 
 
 if __name__ == '__main__':
