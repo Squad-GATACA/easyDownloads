@@ -165,7 +165,7 @@ def contact_mail():
             str(name1)+"\nEmail Id : "+str(email1) + \
             "\nMessage : "+str(msg1)+"\n"
         mail.send(msg)
-        flash("Your Response has been sent successfully!!!", "success")
+        flash("Your feedback has been recorded successfully!!!", "success")
         return redirect(url_for('contactus'))
     return redirect(url_for('contactus'))
 
