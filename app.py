@@ -25,6 +25,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['INSTA_USER_NAME'] = os.environ.get('INSTA_USER_NAME')
 app.config['INSTA_PASS'] = os.environ.get('INSTA_PASS')
 app.config['SITE_KEY'] = os.environ.get('SITE_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 mail = Mail(app)
 
 
@@ -154,7 +155,7 @@ def facebook_video():
 
 
 def is_human(captcha_response):
-    secret = "6LfEJtAaAAAAAIVv610Injo1k6LpyPo42YGcTUzg"
+    secret = str(app.config['SECRET_KEY'])
     payload = {'response': captcha_response, 'secret': secret}
     response = r.post(
         "https://www.google.com/recaptcha/api/siteverify", payload)

@@ -23,16 +23,7 @@
         </div>
     </section>
     <section>
-        {% with messages=get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category,message in messages %}
-        <div class="alert alert-{{category}} alert-dismissible" style="margin-bottom: 0px;">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>{{message}}</strong>
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+
     </section>
 
     <section class="contact-clean">
@@ -49,7 +40,7 @@
                         rows="14" required="" minlength="10"></textarea>
                 </div>
                 <div class="form-group">
-                    <div class="g-recaptcha" data-sitekey="6LfEJtAaAAAAAKxhcR2AopgYOSnoe0rL0aeVz900"></div>
+                    <div class="g-recaptcha" data-sitekey="{{site_key}}"></div>
                 </div>
 
                 <div class="form-group"><button class="btn btn-primary" type="submit">send </button></div>
