@@ -34,7 +34,8 @@ ul li a:hover {
 
 .slider {
     width: 50%;
-    background-color: #669DB3FF;
+    /*background-color: #669DB3FF;*/
+    background-color: #117bd0;
 }
 
 .slider-item {
