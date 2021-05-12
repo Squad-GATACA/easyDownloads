@@ -49,7 +49,7 @@ a :hover {
     color: #505e6c;
     box-shadow: 2px 2px 24px rgba(0,0,0,0.3);
   }
-  
+
   @media (max-width:767px) {
     .contact-clean form {
       padding: 30px;

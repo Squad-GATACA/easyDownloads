@@ -15,7 +15,6 @@ import smtplib
 import json
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
@@ -88,15 +87,22 @@ def instagram_video():
             if(url != ""):
                 try:
                     u = url.split('/')[-2]
-                    os.system(
-                        f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
+                    os.system(f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")                    
                     fname = u.strip()
                     u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
                     u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
                     if(os.path.isfile(u_mp4)):
-                        return send_file(u_mp4, as_attachment=True)
+                        try:
+                            return send_file(u_mp4, as_attachment=True)
+                        except FileNotFoundError:
+                            flash("Private Accounts Posts Cannot be Downloaded!!","danger")
+                            return redirect(url_for('instagram'))
                     else:
-                        return send_file(u_jpg, as_attachment=True)
+                        try:
+                            return send_file(u_jpg, as_attachment=True)
+                        except FileNotFoundError:
+                            flash("Private Accounts Posts Cannot be Downloaded!!","danger")
+                            return redirect(url_for('instagram'))
                 except IndexError:
                     flash("Invalid Url!!!", "danger")
                     return redirect('instagram')
