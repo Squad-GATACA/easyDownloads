@@ -13,6 +13,8 @@ import wget
 from flask_mail import Mail, Message
 import smtplib
 import json
+import urllib
+import pafy
 
 app = Flask(__name__)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -68,11 +70,15 @@ def youtube_video():
             except:
                 flash("Enter Valid Youtube Link!!!", "danger")
                 return redirect('youtube')
-
-            local_download_path = pytube.YouTube(
-                youtube_url).streams[0].download()
-            fname = local_download_path.split("//")[-1]
-            return send_file(fname, as_attachment=True)
+            video = pafy.new(youtube_url)
+            stream = video.streams
+            fname = stream[0].generate_filename()
+            stream[0].download()
+            try:
+                return send_file(fname, as_attachment=True)
+            except FileNotFoundError:
+                flash("Something Went Wrong! Please try again later.", "danger")
+                return redirect('youtube')
         flash("Enter Valid Youtube Link!!!", "danger")
         return redirect('youtube')
     return render_template("page1.html")
@@ -87,7 +93,8 @@ def instagram_video():
             if(url != ""):
                 try:
                     u = url.split('/')[-2]
-                    os.system(f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")                    
+                    os.system(
+                        f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
                     fname = u.strip()
                     u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
                     u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
@@ -95,13 +102,15 @@ def instagram_video():
                         try:
                             return send_file(u_mp4, as_attachment=True)
                         except FileNotFoundError:
-                            flash("Private Accounts Posts Cannot be Downloaded!!","danger")
+                            flash(
+                                "Private Accounts Posts Cannot be Downloaded!!", "danger")
                             return redirect(url_for('instagram'))
                     else:
                         try:
                             return send_file(u_jpg, as_attachment=True)
                         except FileNotFoundError:
-                            flash("Private Accounts Posts Cannot be Downloaded!!","danger")
+                            flash(
+                                "Private Accounts Posts Cannot be Downloaded!!", "danger")
                             return redirect(url_for('instagram'))
                 except IndexError:
                     flash("Invalid Url!!!", "danger")
