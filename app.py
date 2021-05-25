@@ -73,7 +73,11 @@ def youtube_video():
             video = pafy.new(youtube_url)
             stream = video.streams
             fname = stream[0].generate_filename()
-            stream[0].download()
+            try:
+                stream[0].download()
+            except:
+                flash("Something Went Wrong! Please try again later.", "danger")
+                return redirect('youtube')
             try:
                 return send_file(fname, as_attachment=True)
             except FileNotFoundError:
@@ -106,12 +110,8 @@ def instagram_video():
                                 "Private Accounts Posts Cannot be Downloaded!!", "danger")
                             return redirect(url_for('instagram'))
                     else:
-                        try:
-                            return send_file(u_jpg, as_attachment=True)
-                        except FileNotFoundError:
-                            flash(
-                                "Private Accounts Posts Cannot be Downloaded!!", "danger")
-                            return redirect(url_for('instagram'))
+                        return send_file(u_jpg, as_attachment=True)
+
                 except IndexError:
                     flash("Invalid Url!!!", "danger")
                     return redirect('instagram')
