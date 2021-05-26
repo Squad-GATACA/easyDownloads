@@ -97,21 +97,20 @@ def instagram_video():
             if(url != ""):
                 try:
                     u = url.split('/')[-2]
-                    os.system(
-                        f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
-                    fname = u.strip()
-                    u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
-                    u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
-                    if(os.path.isfile(u_mp4)):
-                        try:
+                    if(len(u) == 11):
+                        os.system(
+                            f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
+                        fname = u.strip()
+                        u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
+                        u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
+                        if(os.path.isfile(u_mp4)):
                             return send_file(u_mp4, as_attachment=True)
-                        except FileNotFoundError:
-                            flash(
-                                "Private Accounts Posts Cannot be Downloaded!!", "danger")
-                            return redirect(url_for('instagram'))
+                        else:
+                            return send_file(u_jpg, as_attachment=True)
                     else:
-                        return send_file(u_jpg, as_attachment=True)
-
+                        flash(
+                            "Private account's post cannot be downloaded!!!", "danger")
+                        return redirect('instagram')
                 except IndexError:
                     flash("Invalid Url!!!", "danger")
                     return redirect('instagram')
