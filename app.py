@@ -32,6 +32,8 @@ mail = Mail(app)
 
 @app.route('/')
 def home():
+    os.system(
+        f"instaloader  --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']}")
     return render_template("main.html")
 
 
@@ -98,8 +100,10 @@ def instagram_video():
                 try:
                     u = url.split('/')[-2]
                     if(len(u) == 11):
+                        # os.system(
+                        #    f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
                         os.system(
-                            f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
+                            f"instaloader --filename-pattern={u} -- -{u}")
                         fname = u.strip()
                         u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
                         u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
