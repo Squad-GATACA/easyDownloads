@@ -103,7 +103,7 @@ def instagram_video():
                         # os.system(
                         #    f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
                         os.system(
-                            f"instaloader --filename-pattern={u} -- -{u}")
+                            f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} -- -{u}")
                         fname = u.strip()
                         u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
                         u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
