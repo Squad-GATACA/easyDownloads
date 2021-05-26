@@ -44,7 +44,7 @@ def youtube():
 
 @app.route('/instagram')
 def instagram():
-    f"instaloader  --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']}")
+    (f"instaloader  --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']}")
     return render_template("insta.html")
 
 
@@ -60,29 +60,29 @@ def aboutus():
 
 @ app.route('/contactus')
 def contactus():
-    return render_template("contact.html", site_key = str(app.config['SITE_KEY']))
+    return render_template("contact.html", site_key=str(app.config['SITE_KEY']))
 
 
-@ app.route("/download-youtube-video", methods = ["GET", "POST"])
+@ app.route("/download-youtube-video", methods=["GET", "POST"])
 def youtube_video():
     if(request.method == "POST"):
-        youtube_url=request.form["link"]
+        youtube_url = request.form["link"]
         if(youtube_url != ""):
             try:
-                x=r.get(youtube_url)
+                x = r.get(youtube_url)
             except:
                 flash("Enter Valid Youtube Link!!!", "danger")
                 return redirect('youtube')
-            video=pafy.new(youtube_url)
-            stream=video.streams
-            fname=stream[0].generate_filename()
+            video = pafy.new(youtube_url)
+            stream = video.streams
+            fname = stream[0].generate_filename()
             try:
                 stream[0].download()
             except:
                 flash("Something Went Wrong! Please try again later.", "danger")
                 return redirect('youtube')
             try:
-                return send_file(fname, as_attachment = True)
+                return send_file(fname, as_attachment=True)
             except FileNotFoundError:
                 flash("Something Went Wrong! Please try again later.", "danger")
                 return redirect('youtube')
@@ -91,26 +91,26 @@ def youtube_video():
     return render_template("page1.html")
 
 
-@ app.route('/download-instagram-video', methods = ["GET", "POST"])
+@ app.route('/download-instagram-video', methods=["GET", "POST"])
 def instagram_video():
     if(request.method == "POST"):
-        url=request.form["link"]
-        ftype=request.form["filetype"]
+        url = request.form["link"]
+        ftype = request.form["filetype"]
         if(ftype == "POST"):
             if(url != ""):
                 try:
-                    u=url.split('/')[-2]
+                    u = url.split('/')[-2]
                     if(len(u) == 11):
                         os.system(
                             f"instaloader --filename-pattern={u} --login={app.config['INSTA_USER_NAME']} --password={app.config['INSTA_PASS']} -- -{u}")
 
-                        fname=u.strip()
-                        u_jpg="-".strip()+u.strip()+"/"+fname+".jpg"
-                        u_mp4="-".strip()+u.strip()+"/"+fname+".mp4"
+                        fname = u.strip()
+                        u_jpg = "-".strip()+u.strip()+"/"+fname+".jpg"
+                        u_mp4 = "-".strip()+u.strip()+"/"+fname+".mp4"
                         if(os.path.isfile(u_mp4)):
-                            return send_file(u_mp4, as_attachment = True)
+                            return send_file(u_mp4, as_attachment=True)
                         else:
-                            return send_file(u_jpg, as_attachment = True)
+                            return send_file(u_jpg, as_attachment=True)
                     else:
                         flash(
                             "Private account's post cannot be downloaded!!!", "danger")
