@@ -29,6 +29,8 @@ app.config['SITE_KEY'] = os.environ.get('SITE_KEY')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 mail = Mail(app)
 
+fname1 = ""
+
 
 @app.route('/')
 def home():
@@ -131,6 +133,36 @@ def instagram_video():
     return redirect('instagram')
 
 
+def sd_video():
+    global fname1
+    filedir = os.path.join(fname1+".mp4")
+    try:
+        html = r.get(url)
+        sdvideo_url = re.search('sd_src:"(.+?)"', html.text)[1]
+    except r.ConnectionError as e:
+        flash("OOPS!! Connection Error.", "danger")
+        return redirect('facebook')
+    except r.Timeout as e:
+        flash("OOPS!! Timeout Error", "danger")
+        return redirect('facebook')
+    except r.RequestException as e:
+        flash("OOPS!! General Error or Invalid URL", "danger")
+        return redirect('facebook')
+    except (KeyboardInterrupt, SystemExit):
+        flash("Something Went Wrong!!!", "danger")
+        return redirect('facebook')
+        sys.exit(1)
+    except TypeError:
+        flash("Video May Private or Hd version not avilable!!!", "danger")
+        return redirect('facebook')
+    else:
+        sd_url = sdvideo_url.replace('sd_src:"', '')
+        wget.download(hd_url, filedir)
+        sys.stdout.write(ERASE_LINE)
+        return send_file(fname1.strip()+'.mp4', as_attachment=True)
+    return redirect('facebook_video')
+
+
 @app.route('/download-facebook-video', methods=["GET", "POST"])
 def facebook_video():
     if(request.method == "POST"):
@@ -138,7 +170,9 @@ def facebook_video():
         url = request.form["link"]
         if(url != ""):
             try:
+                global fname1
                 fname = url.split('/')[-2]
+                fname1 = fname
             except IndexError:
                 flash("Invalid Url!!!", "danger")
                 return redirect('facebook')
@@ -147,21 +181,15 @@ def facebook_video():
                 html = r.get(url)
                 hdvideo_url = re.search('hd_src:"(.+?)"', html.text)[1]
             except r.ConnectionError as e:
-                flash("OOPS!! Connection Error.", "danger")
-                return redirect('facebook')
+                return redirect('sd_video')
             except r.Timeout as e:
-                flash("OOPS!! Timeout Error", "danger")
-                return redirect('facebook')
+                return redirect('sd_video')
             except r.RequestException as e:
-                flash("OOPS!! General Error or Invalid URL", "danger")
-                return redirect('facebook')
+                return redirect('sd_video')
             except (KeyboardInterrupt, SystemExit):
-                flash("Something Went Wrong!!!", "danger")
-                return redirect('facebook')
-                sys.exit(1)
+                return redirect('sd_video')
             except TypeError:
-                flash("Video May Private or Hd version not avilable!!!", "danger")
-                return redirect('facebook')
+                return redirect('sd_video')
             else:
                 hd_url = hdvideo_url.replace('hd_src:"', '')
                 wget.download(hd_url, filedir)
