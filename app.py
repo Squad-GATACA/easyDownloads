@@ -180,12 +180,16 @@ def facebook_video():
         url = request.form["link"]
         if(url != "" and len(url.split('/')) == 5):
             try:
-                info = youtube_dl.YoutubeDL().extract_info(url, download=True)
+                info = youtube_dl.YoutubeDL().extract_info(url, download=False)
                 fname = info['title']+'-'+info['id']+".mp4"
             except:
                 flash("Invalid Url!!!", "danger")
                 return redirect('facebook')
-            return send_file(fname, as_attachment=True)
+            try:
+                download_link = info["entries"][-1]["formats"][-1]["url"]
+            except:
+                download_link = info["formats"][-1]["url"]
+                return redirect(download_link+"&dl=1")
         flash("Enter Valid Facebook Link!!!", "danger")
         return redirect('facebook')
     return redirect('facebook')
