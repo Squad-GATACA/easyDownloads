@@ -179,9 +179,12 @@ def facebook_video():
     if(request.method == "POST"):
         url = request.form["link"]
         if(url != "" and len(url.split('/')) == 5):
-            info = youtube_dl.YoutubeDL().extract_info(url, download=False)
-            fname = info['title']+'-'+info['id']+".mp4"
-            time.sleep(20)
+            try:
+                info = youtube_dl.YoutubeDL().extract_info(url, download=False)
+                fname = info['title']+'-'+info['id']+".mp4"
+            except:
+                flash("Invalid Url!!!", "danger")
+                return redirect('facebook')
             try:
                 download_link = info["entries"][-1]["formats"][-1]["url"]
             except:
