@@ -30,6 +30,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 mail = Mail(app)
 
 fname1 = ""
+url1 = ""
 
 
 @app.route('/')
@@ -133,11 +134,14 @@ def instagram_video():
     return redirect('instagram')
 
 
+@app.route('/sd_video', methods=["GET", "POST"])
 def sd_video():
     global fname1
+    global url1
     filedir = os.path.join(fname1+".mp4")
     try:
-        html = r.get(url)
+        ERASE_LINE = '\x1b[2K'
+        html = r.get(url1)
         sdvideo_url = re.search('sd_src:"(.+?)"', html.text)[1]
     except r.ConnectionError as e:
         flash("OOPS!! Connection Error.", "danger")
@@ -157,10 +161,10 @@ def sd_video():
         return redirect('facebook')
     else:
         sd_url = sdvideo_url.replace('sd_src:"', '')
-        wget.download(hd_url, filedir)
+        wget.download(sd_url, filedir)
         sys.stdout.write(ERASE_LINE)
         return send_file(fname1.strip()+'.mp4', as_attachment=True)
-    return redirect('facebook_video')
+    return redirect('facebook')
 
 
 @app.route('/download-facebook-video', methods=["GET", "POST"])
@@ -168,6 +172,8 @@ def facebook_video():
     if(request.method == "POST"):
         ERASE_LINE = '\x1b[2K'
         url = request.form["link"]
+        global url1
+        url1 = url
         if(url != ""):
             try:
                 global fname1
