@@ -135,7 +135,6 @@ def instagram_video():
 @app.route('/download-facebook-video', methods=["GET", "POST"])
 def facebook_video():
     if(request.method == "POST"):
-        start = time.time()
         ERASE_LINE = '\x1b[2K'
         url = request.form["link"]
         if(url != ""):
@@ -148,7 +147,7 @@ def facebook_video():
             try:
                 html = r.get(url)
                 hdvideo_url = re.search('hd_src:"(.+?)"', html.text)[1]
-                time.sleep()
+                time.sleep(20)
             except r.ConnectionError as e:
                 flash("OOPS!! Connection Error.", "danger")
                 return redirect('facebook')
@@ -168,8 +167,6 @@ def facebook_video():
                 hd_url = hdvideo_url.replace('hd_src:"', '')
                 wget.download(hd_url, filedir)
                 sys.stdout.write(ERASE_LINE)
-                end = time.time()
-                print(end-start)
                 return send_file(fname.strip()+'.mp4', as_attachment=True)
         flash("Enter Valid Facebook Link!!!", "danger")
         return redirect('facebook')
