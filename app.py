@@ -157,7 +157,7 @@ def sd_video():
         return redirect('facebook')
         sys.exit(1)
     except TypeError:
-        flash("Video May Private or Hd version not avilable!!!", "danger")
+        flash("Sd version not avilable!!!", "danger")
         return redirect('facebook')
     else:
         sd_url = sdvideo_url.replace('sd_src:"', '')
