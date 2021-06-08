@@ -133,7 +133,7 @@ def instagram_video():
 
 
 @app.route('/download-facebook-video', methods=["GET", "POST"])
-async def facebook_video():
+def facebook_video():
     if(request.method == "POST"):
         start = time.time()
         ERASE_LINE = '\x1b[2K'
@@ -166,7 +166,7 @@ async def facebook_video():
                 return redirect('facebook')
             else:
                 hd_url = hdvideo_url.replace('hd_src:"', '')
-                await wget.download(hd_url, filedir)
+                wget.download(hd_url, filedir)
                 sys.stdout.write(ERASE_LINE)
                 end = time.time()
                 print(end-start)
