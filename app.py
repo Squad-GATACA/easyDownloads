@@ -16,6 +16,7 @@ import json
 import urllib
 import pafy
 import asyncio
+import youtube_dl
 
 app = Flask(__name__)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -132,42 +133,59 @@ def instagram_video():
     return redirect('instagram')
 
 
+# @app.route('/download-facebook-video', methods=["GET", "POST"])
+# def facebook_video():
+#     if(request.method == "POST"):
+#         ERASE_LINE = '\x1b[2K'
+#         url = request.form["link"]
+#         if(url != ""):
+#             try:
+#                 fname = url.split('/')[-2]
+#             except IndexError:
+#                 flash("Invalid Url!!!", "danger")
+#                 return redirect('facebook')
+#             filedir = os.path.join(fname+".mp4")
+#             try:
+#                 html = r.get(url)
+#                 hdvideo_url = re.search('hd_src:"(.+?)"', html.text)[1]
+#                 time.sleep(20)
+#             except r.ConnectionError as e:
+#                 flash("OOPS!! Connection Error.", "danger")
+#                 return redirect('facebook')
+#             except r.Timeout as e:
+#                 flash("OOPS!! Timeout Error", "danger")
+#                 return redirect('facebook')
+#             except r.RequestException as e:
+#                 flash("OOPS!! General Error or Invalid URL", "danger")
+#                 return redirect('facebook')
+#             except (KeyboardInterrupt, SystemExit):
+#                 flash("Something Went Wrong!!!", "danger")
+#                 return redirect('facebook')
+#             except TypeError:
+#                 flash("Video May Private or Hd version not avilable!!!", "danger")
+#                 return redirect('facebook')
+#             else:
+#                 hd_url = hdvideo_url.replace('hd_src:"', '')
+#                 wget.download(hd_url, filedir)
+#                 sys.stdout.write(ERASE_LINE)
+#                 return send_file(fname.strip()+'.mp4', as_attachment=True)
+#         flash("Enter Valid Facebook Link!!!", "danger")
+#         return redirect('facebook')
+#     return redirect('facebook')
+
+
 @app.route('/download-facebook-video', methods=["GET", "POST"])
 def facebook_video():
     if(request.method == "POST"):
-        ERASE_LINE = '\x1b[2K'
         url = request.form["link"]
-        if(url != ""):
+        if(url != "" and len(url.split('/')) == 5):
             try:
-                fname = url.split('/')[-2]
-            except IndexError:
+                info = youtube_dl.YoutubeDL().extract_info(url, download=True)
+                fname = info['title']+'-'+info['id']+".mp4"
+            except:
                 flash("Invalid Url!!!", "danger")
                 return redirect('facebook')
-            filedir = os.path.join(fname+".mp4")
-            try:
-                html = r.get(url)
-                hdvideo_url = re.search('hd_src:"(.+?)"', html.text)[1]
-                time.sleep(20)
-            except r.ConnectionError as e:
-                flash("OOPS!! Connection Error.", "danger")
-                return redirect('facebook')
-            except r.Timeout as e:
-                flash("OOPS!! Timeout Error", "danger")
-                return redirect('facebook')
-            except r.RequestException as e:
-                flash("OOPS!! General Error or Invalid URL", "danger")
-                return redirect('facebook')
-            except (KeyboardInterrupt, SystemExit):
-                flash("Something Went Wrong!!!", "danger")
-                return redirect('facebook')
-            except TypeError:
-                flash("Video May Private or Hd version not avilable!!!", "danger")
-                return redirect('facebook')
-            else:
-                hd_url = hdvideo_url.replace('hd_src:"', '')
-                wget.download(hd_url, filedir)
-                sys.stdout.write(ERASE_LINE)
-                return send_file(fname.strip()+'.mp4', as_attachment=True)
+            return send_file(fname, as_attachment=True)
         flash("Enter Valid Facebook Link!!!", "danger")
         return redirect('facebook')
     return redirect('facebook')
