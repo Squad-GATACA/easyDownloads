@@ -134,7 +134,7 @@ def instagram_video():
     return redirect('instagram')
 
 
-@app.route('/sd_video', methods=["GET", "POST"])
+@app.route('/sd_video')
 def sd_video():
     global fname1
     global url1
@@ -145,20 +145,20 @@ def sd_video():
         sdvideo_url = re.search('sd_src:"(.+?)"', html.text)[1]
     except r.ConnectionError as e:
         flash("OOPS!! Connection Error.", "danger")
-        return redirect('facebook')
+        return redirect(url_for('facebook'))
     except r.Timeout as e:
         flash("OOPS!! Timeout Error", "danger")
-        return redirect('facebook')
+        return redirect(url_for('facebook'))
     except r.RequestException as e:
         flash("OOPS!! General Error or Invalid URL", "danger")
-        return redirect('facebook')
+        return redirect(url_for('facebook'))
     except (KeyboardInterrupt, SystemExit):
         flash("Something Went Wrong!!!", "danger")
-        return redirect('facebook')
+        return redirect(url_for('facebook'))
         sys.exit(1)
     except TypeError:
         flash("Sd version not avilable!!!", "danger")
-        return redirect('facebook')
+        return redirect(url_for('facebook'))
     else:
         sd_url = sdvideo_url.replace('sd_src:"', '')
         wget.download(sd_url, filedir)
@@ -187,16 +187,17 @@ def facebook_video():
                 html = r.get(url)
                 hdvideo_url = re.search('hd_src:"(.+?)"', html.text)[1]
             except r.ConnectionError as e:
-                return redirect('sd_video')
+                return redirect(url_for('sd_video'))
             except r.Timeout as e:
-                return redirect('sd_video')
+                return redirect(url_for('sd_video'))
             except r.RequestException as e:
-                return redirect('sd_video')
+                return redirect(url_for('sd_video'))
             except (KeyboardInterrupt, SystemExit):
-                return redirect('sd_video')
+                return redirect(url_for('sd_video'))
             except TypeError:
-                return redirect('sd_video')
+                return redirect(url_for('sd_video'))
             else:
+                print("Inside HD")
                 hd_url = hdvideo_url.replace('hd_src:"', '')
                 wget.download(hd_url, filedir)
                 sys.stdout.write(ERASE_LINE)
